@@ -15,8 +15,8 @@ app.use('/dist', express.static(path.join(__dirname, '../dist')));
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
-app.get('/runs', (req, res) => {
-    runCursor.findAll().then(runs => {
+app.get('/runs/:userId', (req, res) => {
+    runCursor.findAll(req.params.userId).then(runs => {
         res.send(runs);
     }).catch(error => {
         console.error('couldn\'t get runs', error);

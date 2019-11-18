@@ -2,6 +2,9 @@ const Sequelize = require('sequelize');
 const Model = Sequelize.Model;
 const sequelize = require('../../database');
 
+// TODO make backend typesafe too
+// maybe have hot reloading too
+
 class Run extends Model {}
 Run.init({
   length: {
@@ -39,4 +42,8 @@ Run.sync({ force: true }).then(() => {
   });
 });
 
-module.exports.findAll = () => Run.findAll();
+module.exports.findAll = (userId) => Run.findAll({
+  where: {
+    userId,
+  }
+});

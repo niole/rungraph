@@ -3,6 +3,7 @@ import * as R from 'ramda';
 import { Card, Layout, Menu, Icon } from 'antd';
 import { CreateEditViewRun } from './CreateEditViewRun';
 import { Run } from './types';
+import getRuns from './api/getRuns';
 
 const { Header, Sider, Content } = Layout;
 
@@ -12,13 +13,8 @@ const View = () => {
     const [view, setView] = React.useState('map');
 
     React.useEffect(() => {
-        fetch('/runs').then(x => x.json()).then(runs => {
-            setRunCards(runs.map((run: any) => ({
-                date: run.datetime,
-                distance: run.length,
-                duration: run.duration,
-                route: [[1, 2]],
-            })));
+        getRuns('userId').then(setRunCards).catch((error: any) => {
+            console.error('FAiled', error);
         });
     }, []);
     return (
