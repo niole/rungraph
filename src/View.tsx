@@ -10,7 +10,17 @@ const View = () => {
     const [runCards, setRunCards] = React.useState([]);
     const [collapsed, setToggle] = React.useState(false);
     const [view, setView] = React.useState('map');
-    console.log(runCards);
+
+    React.useEffect(() => {
+        fetch('/runs').then(x => x.json()).then(runs => {
+            setRunCards(runs.map((run: any) => ({
+                date: run.datetime,
+                distance: run.length,
+                duration: run.duration,
+                route: [[1, 2]],
+            })));
+        });
+    }, []);
     return (
         <Layout>
             <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -46,10 +56,11 @@ const View = () => {
                                     onModalSubmit={R.pipe((x: Run) => [x], R.concat(runCards), setRunCards)}
                                 />
                                 <div>
-                                    {runCards.map(({ date, distance }: Run) => (
+                                    {runCards.map(({ duration, date, distance }: Run) => (
                                         <Card>
                                             date {date.toString()}
                                             distance {distance}
+                                            duration {duration}
                                         </Card>
                                     ))}
                                 </div>

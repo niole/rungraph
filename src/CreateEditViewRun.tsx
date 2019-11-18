@@ -15,6 +15,7 @@ const onSubmit = (
             const values = form.getFieldsValue();
             if (onModalSubmit) {
                 onModalSubmit({
+                    duration: values.duration,
                     distance: values.distance,
                     route: values.route,
                     date: values.date
@@ -22,7 +23,7 @@ const onSubmit = (
             }
             resolve(values);
         }, 500);
-        form.validateFields(['date', 'distance', 'route'], (errors, values) => {
+        form.validateFields(['date', 'duration', 'distance', 'route'], (errors, values) => {
             if (R.values(errors).join().length) {
                 clearTimeout(timer);
                 reject(errors);
@@ -76,6 +77,20 @@ export const EditModal: React.FC<CreateEditViewRunProp> = ({
                         },
                         rules: [
                             { required: true, message: 'Please input miles distance', type: 'number' },
+                        ],
+                    })(<Input />)}
+                </Form.Item>
+                <Form.Item label="duration">
+                    {getFieldDecorator('duration', {
+                        getValueFromEvent: event => {
+                            const value = parseFloat(event.target.value);
+                            if (isNaN(value)) {
+                                return event.target.value;
+                            }
+                            return value;
+                        },
+                        rules: [
+                            { required: true, message: 'Please input run duration (minutes)', type: 'number' },
                         ],
                     })(<Input />)}
                 </Form.Item>

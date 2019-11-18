@@ -2,6 +2,7 @@ var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
 var fs = require("fs");
+var runCursor = require('./domain/models/run/run');
 
 var app = express();
 
@@ -13,5 +14,14 @@ app.use(bodyParser.json());
 app.use('/dist', express.static(path.join(__dirname, '../dist')));
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
+
+app.get('/runs', (req, res) => {
+    runCursor.findAll().then(runs => {
+        res.send(runs);
+    }).catch(error => {
+        console.error('couldn\'t get runs', error);
+        res.status(500).send('couldn\'t get runs');
+    });
+});
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
