@@ -7,7 +7,7 @@ module.exports = {
         filename: 'index.js'
     },
 
-    mode: "production",
+    mode: "development",
 
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
@@ -19,6 +19,10 @@ module.exports = {
 
     module: {
         rules: [
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            },
             {
                 test: /\.ts(x?)$/,
                 exclude: /node_modules/,

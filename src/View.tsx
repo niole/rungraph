@@ -1,81 +1,65 @@
 import * as React from "react";
-import styled from 'styled-components';
-import Person from './Person';
+import * as R from 'ramda';
+import { Card, Layout, Menu, Icon } from 'antd';
+import { CreateEditViewRun } from './CreateEditViewRun';
+import { Run } from './types';
 
-const Container = styled.div`
-    font-family: Arial;
-    color: white;
-    background: coral;
-    text-align: center;
-    padding: 10% 10% 0% 10%;
-`;
+const { Header, Sider, Content } = Layout;
 
-const handleDrink = (name: string) => {
-    fetch('/data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            'name': name,
-            'date': new Date().toString(),
-        }),
-    });
-};
-
-const msPerDay = 24 * 60 *60 * 1000;
-const daysSinceDate = (date: Date): number => {
-    const today = Date.now();
-    return Math.floor((today - new Date(date.toString()).getTime()) / msPerDay);
-};
-
-const accumulatedPoints = (daysSinceLastDrink: number): number => {
-    let daysSince = daysSinceLastDrink;
-    let points = 0;
-    while (daysSince > 0) {
-        points += daysSince;
-        daysSince --;
-    }
-    return points;
-};
-
-type Participant = {
-    name: string;
-    points: number;
-};
-
-type Props = {
-    people: Participant[];
-    onDrink: (name: string) => void;
-};
-const View: React.FC<Props> = ({
-    people,
-    onDrink,
-}) => (
-<Container>
-    {people.map(p => <Person {...p} onDrink={onDrink} />)}
-</Container>
-);
-
-const ViewWithState = () => {
-    const [people, setPeople] = React.useState([]);
-    React.useEffect(() => {
-        /**
-         * need to know how many days since person last drank
-         */
-        fetch('/data').then(x => x.json()).then(data => {
-            setPeople(
-                data.map((x: any) => ({
-                    name: x.name,
-                    points: x.pointsBeforeLastDrink + accumulatedPoints(daysSinceDate(x.dateLastDrink))
-                }))
-            );
-        });
-    }, []);
-
+const View = () => {
+    const [runCards, setRunCards] = React.useState([]);
+    const [collapsed, setToggle] = React.useState(false);
+    const [view, setView] = React.useState('map');
+    console.log(runCards);
     return (
-        <View onDrink={handleDrink} people={people} />
+        <Layout>
+            <Sider trigger={null} collapsible collapsed={collapsed}>
+                <div className="logo" />
+                <Menu theme="dark" mode="inline" defaultSelectedKeys={['map']}>
+                    <Menu.Item key="map">
+                        <Icon type="user" />
+                        <span>Map</span>
+                    </Menu.Item>
+                </Menu>
+            </Sider>
+            <Layout>
+                <Header style={{ background: '#fff', padding: 0 }}>
+                    <Icon
+                        className="trigger"
+                        type={collapsed ? 'menu-unfold' : 'menu-fold'}
+                        onClick={() => setToggle(!collapsed)}
+                    />
+                </Header>
+                <Content
+                    style={{
+                        margin: '24px 16px',
+                        padding: 24,
+                        background: '#fff',
+                        minHeight: 280,
+                        height: '100%',
+                    }}
+                >
+                    {R.cond([
+                        [R.equals('map'), () => (
+                            <div>
+                                <CreateEditViewRun
+                                    onModalSubmit={R.pipe((x: Run) => [x], R.concat(runCards), setRunCards)}
+                                />
+                                <div>
+                                    {runCards.map(({ date, distance }: Run) => (
+                                        <Card>
+                                            date {date.toString()}
+                                            distance {distance}
+                                        </Card>
+                                    ))}
+                                </div>
+                            </div>
+                        )],
+                        [R.T, () => null]
+                    ])(view)}
+                </Content>
+            </Layout>
+        </Layout>
     );
 };
-
-export default ViewWithState;
+export default View;
