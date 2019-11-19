@@ -2,7 +2,13 @@ var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
 var fs = require("fs");
+require('./domain/relations');
 var runCursor = require('./domain/models/run/run');
+var routeCursor = require('./domain/models/route/route');
+
+routeCursor.sync().then(() => {
+    runCursor.sync();
+});
 
 var app = express();
 

@@ -6,6 +6,7 @@ import { Run } from '../types';
  */
 export default function getRuns(userId: string): Promise<Run[]> {
     return requestHandler(`/runs/${userId}`).then((runs: any) => {
+        console.log(runs);
         return runs.map((run: any) => ({
             date: run.datetime,
             distance: run.length,
