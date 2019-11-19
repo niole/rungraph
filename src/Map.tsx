@@ -34,7 +34,7 @@ export const Map: React.FC<MapProps> = ({ value, onChange }) => {
 
         map.on('load', () => {
             if (value) {
-                const lines = { type: 'LineString', coordinates: [[0,0],[1,1]], };
+                const lines = { type: 'LineString', coordinates: value };
                 const lineFeatureIds = Draw.add(lines);
             }
         });
