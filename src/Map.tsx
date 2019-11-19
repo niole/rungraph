@@ -14,8 +14,9 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibmlvbGUiLCJhIjoiY2p4N2t1OXpnMGJudDNvbG1tbmRlY
 
 export type MapProps = {
     onChange?: (coords: [number, number][]) => void;
+    value?: [number, number][];
 };
-export const Map: React.FC<MapProps> = ({ onChange }) => {
+export const Map: React.FC<MapProps> = ({ value, onChange }) => {
     React.useEffect(() => {
         const map = new mapboxgl.Map({
             container: 'map',
@@ -30,6 +31,13 @@ export const Map: React.FC<MapProps> = ({ onChange }) => {
         }));
 
         map.addControl(Draw, 'top-left');
+
+        map.on('load', () => {
+            if (value) {
+                const lines = { type: 'LineString', coordinates: [[0,0],[1,1]], };
+                const lineFeatureIds = Draw.add(lines);
+            }
+        });
 
         map.on('draw.create', function (e: any) {
             const newFeature = e.features[0].geometry.coordinates;

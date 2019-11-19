@@ -53,6 +53,12 @@ const View = () => {
                                 <div>
                                     {runCards.map(({ route, duration, date, distance }: Run) => (
                                         <Card>
+                                            <CreateEditViewRun
+                                                defaultDate={date}
+                                                defaultDuration={duration}
+                                                defaultDistance={distance}
+                                                defaultRoute={route}
+                                            />
                                             <div>
                                                 date {date.toString()}
                                             </div>
