@@ -11,7 +11,6 @@ const View = () => {
     const [runCards, setRunCards] = React.useState([]);
     const [collapsed, setToggle] = React.useState(false);
     const [view, setView] = React.useState('map');
-
     React.useEffect(() => {
         getRuns('userId').then(setRunCards).catch((error: any) => {
             console.error('FAiled', error);
@@ -52,11 +51,20 @@ const View = () => {
                                     onModalSubmit={R.pipe((x: Run) => [x], R.concat(runCards), setRunCards)}
                                 />
                                 <div>
-                                    {runCards.map(({ duration, date, distance }: Run) => (
+                                    {runCards.map(({ route, duration, date, distance }: Run) => (
                                         <Card>
-                                            date {date.toString()}
-                                            distance {distance}
-                                            duration {duration}
+                                            <div>
+                                                date {date.toString()}
+                                            </div>
+                                            <div>
+                                                distance {distance}
+                                            </div>
+                                            <div>
+                                                duration {duration}
+                                            </div>
+                                            <div>
+                                                route {route}
+                                            </div>
                                         </Card>
                                     ))}
                                 </div>
